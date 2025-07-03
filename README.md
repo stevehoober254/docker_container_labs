@@ -25,16 +25,15 @@ Before you begin, ensure you have the following installed on your system:
 1. Clone this repository:
 
     ```bash
-    git clone https://github.com/YourGitHubUsername/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/stevehoober254/docker_container_labs.git
+    cd docker_container_labs
     ```
 
-    *(Replace `YourGitHubUsername` and `your-repo-name` with your actual GitHub details.)*
 
 2. Navigate to the desired lab directory:
 
     ```bash
-    cd cybersecurity-lab
+    cd Cybersec
     ```
 
 3. Spin up the lab environment:
