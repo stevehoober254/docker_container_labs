@@ -4,12 +4,14 @@ Welcome to the Cybersecurity & Development Learning Labs repository! This reposi
 
 Each lab is self-contained within its own directory, making it easy to spin up specific environments without interfering with others.
 
+
 ## 🌟 Why Use This Repo?
 
 - **Isolated Environments:** Each lab runs on its own Docker network, minimizing interference and ensuring a safe space for experimentation.
 - **Reproducible:** Docker Compose ensures that your lab environment is consistent every time you spin it up.
 - **Easy Setup:** Get complex lab setups running with just a few commands.
 - **Hands-on Learning:** Practice offensive and defensive security, explore CI/CD pipelines, and build web applications from the ground up.
+- 
 
 ## 🚀 Getting Started
 
@@ -19,6 +21,7 @@ Before you begin, ensure you have the following installed on your system:
 
 - Docker Desktop (for Windows/macOS) or Docker Engine (for Linux)
 - Docker Compose
+- 
 
 ### How to Use a Lab
 
