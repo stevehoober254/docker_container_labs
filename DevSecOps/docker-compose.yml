@@ -1,0 +1,112 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    hostname: gitlab.local
+    container_name: gitlab
+    ports:
+      - "8080:80"
+      - "443:443"
+      - "2222:22"
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.local'
+    networks:
+      - devops
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    user: root
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - devops
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+    depends_on:
+      - db
+    networks:
+      - devops
+
+  db:
+    image: postgres:13
+    container_name: sonardb
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - sonardb_data:/var/lib/postgresql/data
+    networks:
+      - devops
+
+  trivy:
+    image: aquasec/trivy
+    container_name: trivy
+    entrypoint: ["tail", "-f", "/dev/null"] # Keeps container running for exec-based use
+    networks:
+      - devops
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: zap
+    ports:
+      - "8090:8080"
+    entrypoint: ["tail", "-f", "/dev/null"]
+    networks:
+      - devops
+
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - devops
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+    networks:
+      - devops
+
+volumes:
+  gitlab-config:
+  gitlab-logs:
+  gitlab-data:
+  jenkins_home:
+  sonardb_data:
+  portainer_data:
+  pgadmin_data:
+
+networks:
+  devops:
+    driver: bridge

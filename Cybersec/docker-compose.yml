@@ -2,19 +2,19 @@
 
 # Define the services (containers) that will run in your lab
 services:
-
   # ---------------------------------------------------
   # Kali Linux Container (Your Attacker Machine)
   # ---------------------------------------------------
   kali:
     image: kalilinux/kali-rolling:latest # Use the latest rolling release of Kali
     container_name: kali-attacker
-    privileged: true # Allows Kali to use tools that require elevated privileges (e.g., raw sockets, sniffing)
-                     # Use with caution and understand the implications. Only for isolated lab environments.
-    tty: true        # Allocate a pseudo-TTY, essential for interactive shell
+    privileged:
+      true # Allows Kali to use tools that require elevated privileges (e.g., raw sockets, sniffing)
+      # Use with caution and understand the implications. Only for isolated lab environments.
+    tty: true # Allocate a pseudo-TTY, essential for interactive shell
     stdin_open: true # Keep STDIN open even if not attached, for interactive processes
     networks:
-      - cyber_lab_network # Connects Kali to your isolated lab network
+      - cybersec # Connects Kali to your isolated lab network
     volumes:
       # Mount a volume to persist your work (scripts, tools, results)
       # Host path (left of colon) can be changed, e.g., './kali_data'
@@ -33,10 +33,10 @@ services:
       # You'll access Juice Shop from your host browser at http://localhost:3000
       - "3000:3000"
     networks:
-      - cyber_lab_network # Connects Juice Shop to your isolated lab network
+      - cybersec # Connects Juice Shop to your isolated lab network
     # Optional: Volume for persistent data if you want to save progress
-    # volumes:
-    #   - juice_shop_data:/app/data
+    volumes:
+      - juice_shop_data:/app/data
 
   # ---------------------------------------------------
   # DVWA (Damn Vulnerable Web Application)
@@ -49,10 +49,10 @@ services:
       # You'll access DVWA from your host browser at http://localhost:8081
       - "8081:80"
     networks:
-      - cyber_lab_network # Connects DVWA to your isolated lab network
+      - cybersec # Connects DVWA to your isolated lab network
     # Optional: Volume for persistent data if you want to save progress
-    # volumes:
-    #   - dvwa_data:/var/www/html/dvwa/hackable/uploads
+    volumes:
+      - dvwa_data:/var/www/html/dvwa/hackable/uploads
     environment:
       # Set up MySQL credentials for DVWA's internal database
       # These are default for the image and can be changed if needed
@@ -70,24 +70,23 @@ services:
     # IMPORTANT SECURITY NOTE:
     # Metasploitable2 is EXTREMELY vulnerable. Do NOT expose its ports directly to your host
     # unless you fully understand the risks and have a firewall in place.
-    # By default, it's only accessible from other containers on 'cyber_lab_network'.
+    # By default, it's only accessible from other containers on 'cybersec'.
     # If you absolutely need to access a specific port from your host (e.g., for a specific web service),
     # uncomment and adjust a specific port mapping like this:
     # ports:
     #   - "8082:80" # Example: map container port 80 to host port 8082 for HTTP access
     networks:
-      - cyber_lab_network # Connects Metasploitable2 to your isolated lab network
+      - cybersec # Connects Metasploitable2 to your isolated lab network
     # Metasploitable2 typically doesn't need persistent volumes for basic learning,
     # as its purpose is often to be reset to a vulnerable state.
 
 # Define the custom network for isolated lab communication
 networks:
-  cyber_lab_network:
+  cybersec:
     driver: bridge # A standard bridge network for containers to communicate
 
 # Define volumes for data persistence
 volumes:
   kali_data: {} # This creates a named volume for Kali's /root directory
-  # Uncomment these if you decide to use volumes for Juice Shop or DVWA
-  # juice_shop_data: {}
-  # dvwa_data: {}
+  juice_shop_data: {}
+  dvwa_data: {}
